@@ -13,6 +13,10 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
+#define CAN_IFACE	"vcan0"
+
+u_int8_t sas_crc(u_int8_t *data, int len);
+
 int main(){
 	int s;
 	struct ifreq ifr;
@@ -25,7 +29,7 @@ int main(){
 		return 1;
 	}
 
-	strcpy(ifr.ifr_name, "can0" );
+	strcpy(ifr.ifr_name, CAN_IFACE );
 	ioctl(s, SIOCGIFINDEX, &ifr);
 
 	memset(&addr, 0, sizeof(addr));
@@ -41,16 +45,23 @@ int main(){
 
 		nbytes = read(s, &frame, sizeof(struct can_frame));
 
-		float angle = (float)(((frame.data[0] << 8)|frame.data[1]) - 0x8000) / 10.0;
-		float speed = (float)(((frame.data[2] << 8)|frame.data[3]) - 0x8000) / 10.0;
-
-		printf("%.02f;%.02f\n",angle,speed);
-		
 		if (nbytes < 0) {
 			perror("Read");
 			return 1;
 		}
-	
+
+		float angle = (float)(((frame.data[0] << 8)|frame.data[1]) - 0x8000) / 10.0;
+		float speed = (float)(((frame.data[2] << 8)|frame.data[3]) - 0x8000) / 10.0;
+
+		printf("%.02f;%.02f ",angle,speed);
+		
+		if(sas_crc(frame.data,6) != frame.data[6]){
+			printf("CRC not match. Calc: 0x%0X Get: 0x%0X\n",sas_crc(frame.data,6),frame.data[6]);
+		}else{
+			
+			printf("CRC Ok\n");
+		}
+
 	}
 
 
@@ -61,4 +72,18 @@ int main(){
 
 	return 0;
 
+}
+
+
+u_int8_t sas_crc(u_int8_t *data, int len){
+
+	u_int8_t summ = 0;
+
+	for(u_int32_t i=0; i<len; i++){
+		summ += *data++;
+	}
+
+	summ = 255 - summ;
+	
+	return summ;
 }
