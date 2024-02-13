@@ -90,3 +90,12 @@ u_int8_t sas_crc(u_int8_t *data, int len){
 | 0x7С6 | 05   | 80 |
 | 0x7C6 | B2   | 80 |
 
+## Разъем для подключения
+
+Разъем гнездовой 8-ми контактный серии TE Connectivity TH-025, АМР 1376352-1. [Ссылка](https://klemma505.ru/product/amr-1376352-1-1717103-1-razem-gnezdovoj-8-mi-kontaktnyj-serii-te-connectivity-th-025/)
+
+![АМР 1376352-1](./img/connector/socket.jpg)
+
+Контакт гнездовой серии ТН-025, АМР 1123343-1. [Ссылка](https://klemma505.ru/product/amr-1123344-1-kontakt-gnezdovoj-serii-tn-025/)
+
+![АМР 1123343-1](./img/connector/pin.jpg)
